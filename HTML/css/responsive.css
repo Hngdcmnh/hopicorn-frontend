@@ -28,6 +28,7 @@
       display: block;
       margin-bottom: 20px; }
     .navigation a {
+      color: rgba(15, 15, 15, 0.75);
       display: block;
       font-size: 25px;
       margin: 0;
@@ -57,6 +58,9 @@
     .banner-text p {
       font-size: 18px; }
 
+  .navigation a {
+    color: rgba(255, 255, 255, 0.75);
+
   .flexslider {
     padding-bottom: 80px; }
 
@@ -67,12 +71,24 @@
     margin-bottom: 50px; } }
 @media screen and (max-width: 640px) {
   .banner-text {
-    padding-top: 35%; } }
+    padding-top: 35%; } 
+  
+    .navigation a {
+      color: rgba(255, 255, 255, 0.75)
+    }
+  
+  }
 @media screen and (max-width: 480px) {
   .banner-text {
     padding-top: 45%; }
     .banner-text h1 {
-      font-size: 32px; } }
+      font-size: 32px; }
+    
+    
+      .navigation a {
+        color: rgba(255, 255, 255, 0.75)
+      }
+    }
 @media screen and (max-width: 320px) {
   .banner-text {
     padding-top: 55%; }
@@ -80,4 +96,10 @@
   .testimonials blockquote {
     padding: 20px 5% 0; }
   .testimonials p {
-    font-size: 26px; } }
+    font-size: 26px; } 
+  
+    .navigation a {
+      color: rgba(255, 255, 255, 0.75)
+    }
+  
+  }
