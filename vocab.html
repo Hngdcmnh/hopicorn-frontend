@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Practice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .sentence {
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sentence span {
+            flex: 1;
+        }
+
+        .sentence input {
+            margin-left: 10px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            width: 150px;
+        }
+
+        .sentence button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .sentence button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Vocabulary Practice</h1>
+        <div id="sentences-container"></div>
+    </div>
+
+    <script>
+        // Function to fetch JSON data
+        async function fetchData() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                renderSentences(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        function createSentenceElement(entry) {
+            const container = document.createElement('div');
+            container.className = 'sentence';
+
+            const sentenceText = document.createElement('span');
+            sentenceText.innerHTML = entry.Sentence.replace('___', '<input type="text" placeholder="Your answer">');
+            container.appendChild(sentenceText);
+
+            const checkButton = document.createElement('button');
+            checkButton.innerText = 'Check';
+            checkButton.onclick = () => checkAnswer(entry, container);
+            container.appendChild(checkButton);
+
+            const result = document.createElement('div');
+            result.className = 'result';
+            container.appendChild(result);
+
+            return container;
+        }
+
+        function checkAnswer(entry, container) {
+            const input = container.querySelector('input');
+            const result = container.querySelector('.result');
+
+            if (input.value.trim().toLowerCase() === entry.Word.toLowerCase()) {
+                result.innerText = `Correct! Meaning: ${entry.Meaning}`;
+                result.style.color = 'green';
+            } else {
+                result.innerText = `Incorrect. The word is "${entry.Word}". Meaning: ${entry.Meaning}`;
+                result.style.color = 'red';
+            }
+
+            result.style.display = 'block';
+        }
+
+        function renderSentences(data) {
+            const container = document.getElementById('sentences-container');
+            data.forEach(entry => {
+                container.appendChild(createSentenceElement(entry));
+            });
+        }
+
+        // Fetch data and render sentences on page load
+        fetchData();
+    </script>
+</body>
+
+</html>

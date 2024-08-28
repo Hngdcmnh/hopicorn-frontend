@@ -40,7 +40,7 @@ h5 {
 }
 
 .btn {
-  background-color: #e84545;
+  background-color: #FF4081;
   color: #fff;
   font-size: 13px;
   font-weight: 600;
@@ -60,7 +60,7 @@ h5 {
 
 .btn:focus {
   transform: scale(0.9);
-  background-color: #e52e2e;
+  background-color: #FF4081;
   color: #fff;
 }
 
@@ -85,7 +85,7 @@ a:focus {
 }
 
 body {
-  font-family: "Itim", cursive;
+  font-family: "Lexend", sans-serif;
   font-weight: 400;
   color: #6c7279;
 }
@@ -102,6 +102,7 @@ ul li {
 
 .section {
   padding: 50px 0;
+  background-color: transparent;
 }
 
 .no-padding {
@@ -121,7 +122,7 @@ h4,
 h5,
 h6,
 p {
-  font-family: "Itim", cursive;
+  font-family: "Lexend", sans-serif;
 }
 
 /* ==========================================================================
@@ -151,6 +152,7 @@ p {
 
 #header.fixed {
   background-color: #545454;
+  /* background-color: transparent; */
 }
 
 #header.fixed .header-content {
@@ -350,7 +352,7 @@ p {
 	$Banner
 ========================================================================== */
 .banner {
-  background-image: url(../images/Hopicorn.png);
+  background-image: url(../images/web-background.png);
   background-position: center top;
   background-repeat: no-repeat;
   -moz-background-size: cover;
@@ -366,7 +368,7 @@ p {
 
 .banner-text h1 {
   color: #fff;
-  font-family: "Itim", cursive;
+  font-family: "Lexend", sans-serif;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -383,10 +385,12 @@ p {
 	$Features
 ========================================================================== */
 .feature {
+  background-color: transparent;
   margin-bottom: 10px;
 }
 
 .feature-content {
+  background-color: transparent;
   padding: 0 15px;
   margin-top: 30px;
 }
@@ -594,12 +598,12 @@ p {
 }
 
 .footer-top {
-  background-color: #3a3e64;
+  background-color: #f078b1;
   padding-top: 50px;
 }
 
 .footer-bottom {
-  background-color: #313454;
+  background-color: #f078b1;
   padding: 20px 0;
 }
 
@@ -1128,4 +1132,65 @@ p {
 .center-text {
   margin: 30px;
   text-align: center;  /* Horizontally center the text */
+}
+
+body {
+  background-image: url("../images/web-background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.container {
+  background-color: transparent;
+}
+
+.feature {
+  background-color: transparent;
+}
+
+.section {
+  background-color: transparent;
+}
+
+.body {
+  background-color: transparent;
+}
+
+.cta-button {
+  background-color: #FF4081; /* Pink pastel color */
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  animation: zoomInOut 2s infinite ease-in-out;
+}
+
+@keyframes zoomInOut {
+  0% {
+      transform: scale(1); /* Initial scale */
+  }
+  50% {
+      transform: scale(1.1); /* Zoom in */
+  }
+  100% {
+      transform: scale(1); /* Zoom out */
+  }
+}
+.fixed {
+  background-color: #fff !important;
+  box-shadow: 0 4px 2px -2px rgb(233, 233, 233);
+}
+
+.fixed .navigation a {
+  color: pink
+}
+.fixed .navigation a.active {
+  color: #FF4081
+}
+.contributer {
+  display: flex;
+  justify-content: center;
 }
