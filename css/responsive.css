@@ -78,7 +78,13 @@
     }
   
   }
+.card {
+  font-size: 16px
+}
 @media screen and (max-width: 480px) {
+  .card {
+    font-size: 12px;
+  }
   .banner-text {
     padding-top: 45%; }
     .banner-text h1 {

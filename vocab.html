@@ -1,136 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocabulary Practice</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        .sentence {
-            background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .sentence span {
-            flex: 1;
-        }
-
-        .sentence input {
-            margin-left: 10px;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            width: 150px;
-        }
-
-        .sentence button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        .sentence button:hover {
-            background-color: #0056b3;
-        }
-
-        .result {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .question {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .question p {
+      margin-bottom: 10px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 300px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 10px;
+    }
+    .correct {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: #ff3860;
+      color: white;
+      text-align: center;
+      border-radius: 4px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      font-size: 17px;
+    }
+    .toast.show {
+      visibility: visible;
+      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+    @-webkit-keyframes fadein {
+      from {bottom: 0; opacity: 0;} 
+      to {bottom: 30px; opacity: 1;}
+    }
+    @keyframes fadein {
+      from {bottom: 0; opacity: 0;}
+      to {bottom: 30px; opacity: 1;}
+    }
+    @-webkit-keyframes fadeout {
+      from {bottom: 30px; opacity: 1;} 
+      to {bottom: 0; opacity: 0;}
+    }
+    @keyframes fadeout {
+      from {bottom: 30px; opacity: 1;}
+      to {bottom: 0; opacity: 0;}
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <h1>Vocabulary Practice</h1>
-        <div id="sentences-container"></div>
-    </div>
 
-    <script>
-        // Function to fetch JSON data
-        async function fetchData() {
-            try {
-                const response = await fetch('data.json');
-                const data = await response.json();
-                renderSentences(data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
+  <h1>Fill in the blanks with the correct words</h1>
 
-        function createSentenceElement(entry) {
-            const container = document.createElement('div');
-            container.className = 'sentence';
+  <div id="questions"></div>
 
-            const sentenceText = document.createElement('span');
-            sentenceText.innerHTML = entry.Sentence.replace('___', '<input type="text" placeholder="Your answer">');
-            container.appendChild(sentenceText);
+  <button onclick="calculateScore()">Submit</button>
+  <button onclick="exportCSV()">Export to CSV</button>
 
-            const checkButton = document.createElement('button');
-            checkButton.innerText = 'Check';
-            checkButton.onclick = () => checkAnswer(entry, container);
-            container.appendChild(checkButton);
+  <div id="score" style="margin-top: 20px;"></div>
 
-            const result = document.createElement('div');
-            result.className = 'result';
-            container.appendChild(result);
+  <div id="toast" class="toast">Please fill in all blanks!</div>
 
-            return container;
-        }
+  <script>
+    const words = [
+    { word: 'aquatic', meaning: 'operating or living or growing in water', sentence: 'Most are ___, but a few - such as woodlice - live on land.' },
+{ word: 'array', meaning: 'an impressive display or assortment', sentence: 'There was a vast ___ of colors to choose from.' },
+{ word: 'defense', meaning: 'protection from harm', sentence: 'They fought in ___ of their country.' },
+{ word: 'deforestation', meaning: 'the removal of trees', sentence: 'Their work should not be construed as support for heavy cutting of trees or ___.' },
+{ word: 'environment', meaning: 'the totality of surrounding conditions', sentence: 'The ___ is perfect for cloud-based accounting applications.' },
+{ word: 'erosion', meaning: 'a gradual decline of something', sentence: 'No-till farming reduces soil ___.' },
+{ word: 'extend', meaning: 'stretch out over a distance, space, time, or scope', sentence: '___ your arms (out) in front of you.' },
+{ word: 'fall', meaning: 'the act of cutting something down (as a tree)', sentence: 'It peaked at $1,250 in November last year, but ___ sharply in December.' },
+{ word: 'habitat', meaning: 'the type of environment in which an organism normally lives', sentence: 'Saving ___ is important as it could ensure a species’ survival.' },
+{ word: 'impact', meaning: 'a forceful consequence; a strong effect', sentence: 'The ___ on the environment is at best slightly positive and could be negative.' },
+{ word: 'inhibit', meaning: 'limit, block, or decrease the action or function of', sentence: 'What makes this a good market to expand to might also ___ growth.' },
+{ word: 'intercept', meaning: 'seize, interrupt, or stop something on its way', sentence: 'The evidence was scattered—a telephone ___ here, some video footage there, a license plate.' },
+{ word: 'logging', meaning: 'the work of cutting down trees for timber', sentence: 'The illegal ___ has become so prevalent that Western Australia\'s lawmakers are deliberating harsher penalties.' },
+{ word: 'myriad', meaning: 'a large indefinite number', sentence: 'Today\'s local entrepreneurs face ___ challenges.' },
+{ word: 'nutrient', meaning: 'any substance that can be metabolized to give energy', sentence: 'We should be able to see some of the food by-products or ___ that were absorbed.' },
+{ word: 'pollution', meaning: 'contamination of the natural environment', sentence: 'People in China experience serious air and water ___.' },
+{ word: 'stabilize', meaning: 'keep from fluctuating or put into an equilibrium', sentence: 'In a new society with little to ___ it.' },
+{ word: 'terrestrial', meaning: 'relating to the land as opposed to the sea or air', sentence: 'Heavy elements are crucial when forming ___ planets like our own.' },
+{ word: 'vanish', meaning: 'become invisible or unnoticeable', sentence: 'Time just ___ when we are absorbed in a task.' },
+{ word: 'vegetation', meaning: 'the process of growth in plants', sentence: 'The ___ would absorb and clean water runoff during storms.' },
+{ word: 'aspect', meaning: 'a distinct feature or element in a problem', sentence: 'Eating healthy foods is only/just one ___ of a healthy lifestyle.' },
+{ word: 'breed', meaning: 'have young (animals) or reproduce (organisms)', sentence: 'He got into the business of ___ cattle.' },
+{ word: 'diurnal', meaning: 'of or belonging to or active during the day', sentence: 'Humans are ___ animals and so tend to be active by day and rest at night.' },
+{ word: 'endure', meaning: 'continue to live through hardship or adversity', sentence: 'My face and hands could ___ the cold for about 10 minutes.' },
+{ word: 'evolve', meaning: 'undergo development', sentence: 'As our businesses continue to ___, we look forward to more opportunities.' },
+{ word: 'fascinate', meaning: 'cause to be interested or curious', sentence: 'The golden, geometric splendours of The Kiss ___ me.' },
+{ word: 'feat', meaning: 'a notable achievement', sentence: 'Expanding the options of what you can watch would be an impressive ___.' },
+{ word: 'fuel', meaning: 'provide with an energy-producing substance', sentence: 'Freezing temperatures in Chicago slowed the process to ___ planes.' },
+{ word: 'hemisphere', meaning: 'half of the terrestrial globe', sentence: 'London has the potential to be the Silicon Valley of the Western ___.' },
+{ word: 'imperative', meaning: 'some duty that is essential and urgent', sentence: 'The following five steps are ___ to master Big Data and drive business growth.' },
+{ word: 'inhabit', meaning: 'live in; be a resident of', sentence: 'Ghosts ___ the room known as Mr. Morgan\'s Library.' },
+{ word: 'migration', meaning: 'the movement of persons from one locality to another', sentence: 'Recent trends in ___ include the arrival of workers from Eastern Europe.' },
+{ word: 'navigation', meaning: 'guidance of ships, planes, or vehicles from place to place', sentence: 'Smartphones offer a compelling alternative to built-in ___ systems.' },
+{ word: 'nocturnal', meaning: 'belonging to or active during the night', sentence: '___ animals in the park benefit from reduced light distractions.' },
+{ word: 'observer', meaning: 'an expert who watches attentively and comments on something', sentence: 'The star is not visible to an ___ without a telescope.' },
+{ word: 'obscure', meaning: 'make unclear, indistinct, or blurred', sentence: 'The gaming pavilion was ___ by thick clouds and flying garbage.' },
+{ word: 'optimum', meaning: 'most desirable possible under a restriction', sentence: 'There are no signposts that define the ___ calories to choose.' },
+{ word: 'species', meaning: 'a specific kind of something', sentence: 'The program focuses on fish ___ collection and identification.' },
+{ word: 'stray', meaning: 'wander from a direct course or at random', sentence: 'The airplane ___ off course.' },
+{ word: 'wind-swept', meaning: 'open to or swept by wind', sentence: 'In the ___ mountains, herders tend shaggy black yaks.' },
+{ word: 'accumulate', meaning: 'get or gather together', sentence: 'Drivers face a temporary ban if they ___ 12 points on their licence over a three-year period.' },
+{ word: 'adapt', meaning: 'conform oneself to new or different conditions', sentence: 'Cyclamen prefers a cool indoor climate but will easily ___ to life outside under cover from frost.' },
+{ word: 'ascertain', meaning: 'find out or learn with certainty, as by making an inquiry', sentence: 'We still can\'t ___ whether the survivors are passengers or residents.' },
+{ word: 'dilute', meaning: 'lessen the strength or flavor of a solution or mixture', sentence: 'When it\'s ___ with cola or lemonade, people can\'t actually taste that there\'s something off.' },
+{ word: 'diverse', meaning: 'distinctly dissimilar or unlike', sentence: 'The magazine covers topics as ___ as chemistry and sculpture.' },
+{ word: 'evaporation', meaning: 'the process of becoming a suspension of particles in the air', sentence: 'Water loss through ___.' },
+{ word: 'extreme', meaning: 'of the greatest possible degree, extent, or intensity', sentence: 'Several cities in the northern U.S. have been rendered virtually uninhabitable by the current ___ cold spell.' },
+{ word: 'fringe', meaning: 'the outside boundary or surface of something', sentence: 'She and her colleagues lived improvised lives on the city’s ___.' },
+{ word: 'materialism', meaning: 'theory explaining all phenomena in terms of physical causes', sentence: 'Copying is an extremely efficient ___.' },
+{ word: 'minimize', meaning: 'make small or insignificant', sentence: 'Auto-access models seek to ___ the human involvement required to grant or revoke employee access.' },
+{ word: 'moisture', meaning: 'wetness caused by water', sentence: 'Hotter air around the globe causes more ___ to be held in the air than in prior seasons.' },
+{ word: 'occupy', meaning: 'live in (a certain place)', sentence: 'It ___ one quarter of our waking lives and serves many important purposes.' },
+{ word: 'prolific', meaning: 'intellectually productive', sentence: 'Seeing how ___ he is, in terms of writing songs.' },
+{ word: 'resilient', meaning: 'recovering readily from adversity, depression, or the like', sentence: 'Reforms to the UK banking sector aimed at making it more ___ after the 2008 financial crisis have become law.' },
+{ word: 'sparse', meaning: 'not dense or plentiful', sentence: 'Activity was ___ on Tuesday with Asia absent its star performer as the Tokyo market is shut for the rest of the week.' },
+{ word: 'stressor', meaning: 'any agent that causes stress to an organism', sentence: 'Stress and ___ are just one of several risk factors.' },
+{ word: 'swing', meaning: 'change direction with a swinging motion; turn', sentence: 'The change of possession from a fumble can result in a ___ of 14 points or more.' },
+{ word: 'thrive', meaning: 'make steady progress', sentence: 'The organization is ___ because it is getting the best of both men.' },
+{ word: 'transitional', meaning: 'of or relating to change from one state to another', sentence: 'Additional services are being put in place across Northern Ireland during the ___ period.' },
+{ word: 'vigorous', meaning: 'acting with great force or energy or emotional intensity', sentence: 'Some of these crimes are so serious and ___ that they lead to a prison sentence.' }
 
-        function checkAnswer(entry, container) {
-            const input = container.querySelector('input');
-            const result = container.querySelector('.result');
+    ];
 
-            if (input.value.trim().toLowerCase() === entry.Word.toLowerCase()) {
-                result.innerText = `Correct! Meaning: ${entry.Meaning}`;
-                result.style.color = 'green';
-            } else {
-                result.innerText = `Incorrect. The word is "${entry.Word}". Meaning: ${entry.Meaning}`;
-                result.style.color = 'red';
-            }
+    let score = 0;
+    let userAnswers = [];
 
-            result.style.display = 'block';
-        }
+    function loadQuestions() {
+      const questionsDiv = document.getElementById('questions');
+      
+      words.forEach((wordObj, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.classList.add('question');
+        
+        const sentence = document.createElement('p');
+        sentence.innerHTML = wordObj.sentence.replace('___', `<input type="text" id="word-${index}" placeholder="Your answer">`);
+        questionDiv.appendChild(sentence);
 
-        function renderSentences(data) {
-            const container = document.getElementById('sentences-container');
-            data.forEach(entry => {
-                container.appendChild(createSentenceElement(entry));
-            });
-        }
+        const button = document.createElement('button');
+        button.innerHTML = 'Check';
+        button.onclick = () => checkAnswer(index, wordObj.word, wordObj.meaning);
+        questionDiv.appendChild(button);
 
-        // Fetch data and render sentences on page load
-        fetchData();
-    </script>
+        const resultDiv = document.createElement('div');
+        resultDiv.id = `result-${index}`;
+        resultDiv.classList.add('result');
+        questionDiv.appendChild(resultDiv);
+
+        questionsDiv.appendChild(questionDiv);
+      });
+    }
+
+    function checkAnswer(index, correctWord, meaning) {
+      const userAnswer = document.getElementById(`word-${index}`).value.trim().toLowerCase();
+      const resultDiv = document.getElementById(`result-${index}`);
+      
+      if (!userAnswer) {
+        showToast();
+        return;
+      }
+
+      if (userAnswer === correctWord.toLowerCase()) {
+        resultDiv.innerHTML = `Correct! Meaning: ${meaning}`;
+        resultDiv.classList.remove('error');
+        resultDiv.classList.add('correct');
+        score++;
+      } else {
+        resultDiv.innerHTML = `Error! The correct word is "${correctWord}". Meaning: ${meaning}`;
+        resultDiv.classList.remove('correct');
+        resultDiv.classList.add('error');
+      }
+      
+      // Store user answer
+      userAnswers[index] = {
+        word: correctWord,
+        userAnswer: userAnswer,
+        correct: userAnswer === correctWord.toLowerCase() ? 'Correct' : 'Error',
+        meaning: meaning
+      };
+    }
+
+    function calculateScore() {
+      const totalQuestions = words.length;
+      const scoreDiv = document.getElementById('score');
+      scoreDiv.innerHTML = `Your score: ${score}/${totalQuestions}`;
+    }
+
+    function exportCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,Word,User Answer,Correct/Incorrect,Meaning\n";
+      
+      userAnswers.forEach(answer => {
+        const row = `${answer.word},${answer.userAnswer},${answer.correct},${answer.meaning}\n`;
+        csvContent += row;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "vocabulary_test_results.csv");
+      document.body.appendChild(link); // Required for FF
+      link.click();
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.className = "toast show";
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+      }, 3000);
+    }
+
+    window.onload = loadQuestions;
+  </script>
+
 </body>
-
 </html>
